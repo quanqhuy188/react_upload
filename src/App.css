@@ -9,6 +9,10 @@
 .App .Header img{
   width:20px;
   margin-right:10px;
+  
+}
+img{
+  cursor:pointer;
 }
 .App-logo {
   height: 40vmin;
@@ -31,7 +35,20 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.Footer ul li.selected{
+  color:red;
+}
+.Footer ul li{
+  cursor:pointer;
+}
+.Footer ul{
+  list-style:none;
+}
+.Footer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .App-link {
   color: #61dafb;
 }

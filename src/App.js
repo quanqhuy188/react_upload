@@ -2,6 +2,7 @@ import check from './img/check.svg';
 import './App.css';
 import React ,{ Component } from "react";
 import Todoitem from './components/Todoitem';
+import classNames from 'classnames';
 class App extends React.Component {
 constructor(){
   super();
@@ -14,7 +15,13 @@ constructor(){
       {title : "CPU", isComplete :false},
       {title : "RAM", isComplete :true},
     
-  ]} 
+  ],
+  filters :[
+    {name : "All", isShow :true},
+    {name : "Active", isShow :false},
+    {name : "Completed", isShow :false},
+  ]
+} 
   this.onKeyUp = this.onKeyUp.bind(this);
   this.onChange = this.onChange.bind(this);
 }
@@ -60,6 +67,41 @@ onCheckClicked = () =>{
     }       
   })
 }
+onFilterClicked =(indexFilter) =>{
+  this.setState( state =>{
+    const newFilter = state.filters.map((item,index) =>{
+      if(indexFilter === index){
+        let newItem = {};
+        newItem = {...item,isShow : true}
+        return newItem;
+      }
+      else{
+        let newItem = {};
+        newItem = {...item,isShow : false}
+        return newItem;
+      }
+    })
+
+    // let isShow = state.filters[indexFilter].isShow;
+    // let nameFilter =  state.filters[indexFilter].name;
+     
+    // const newTodoitems = state.Todoitems.filter((item,index) =>{
+    //     if(nameFilter === "Active"){
+    //       return (item.isComplete !== true);
+    //     }
+    //     else if(nameFilter === "Completed"){
+    //       return (item.isComplete !== false);
+    //     }     
+    //     else{
+    //       return (item);
+    //     }
+    // })    
+    return {
+      // Todoitems :newTodoitems,
+      filters : newFilter
+    }       
+  })  
+}
 onChange(event){
   this.setState({
     valueInput:event.target.value,
@@ -82,7 +124,29 @@ onKeyUp(event){
 }
 
   render(){
-    const {Todoitems, valueInput} = this.state;
+    const {Todoitems, valueInput,filters} = this.state;
+    let displayFilter =[];
+    let filtersName = filters.find(item => item.isShow).name;
+    console.log(filtersName)
+    switch(filtersName) {
+      case 'Completed':
+        displayFilter = Todoitems.filter((item,index) =>{
+          return (item.isComplete !== false); 
+        }) 
+        console.log(displayFilter)
+        break;
+      case 'Active':
+        displayFilter = Todoitems.filter((item,index) =>{
+          return (item.isComplete !== true); 
+        }) 
+        console.log(displayFilter)
+        break;
+        case 'All':
+          displayFilter = Todoitems;
+          console.log(displayFilter)
+        break;
+        // code block
+    }
     
     return (
       
@@ -94,18 +158,27 @@ onKeyUp(event){
             </input>
         </div>
         <div className="Main">
-        {
-            (Todoitems.length > 0 && Todoitems.map((item,index) =>
+          {
+            (displayFilter.length > 0 && displayFilter.map((item,index) =>
                 <Todoitem key={index} item={item} onClickRemove={() => this.onItemClickedRemove(index)} onClick={() => this.onItemClicked(index)} ></Todoitem>
               ))
             }
-            {Todoitems.length === 0 && 'Nothing Here'} 
+            {displayFilter.length === 0 && 'Nothing Here'} 
         </div>
         <div class="Footer">
            {(Todoitems.length &&  <div>
                 <span> {Todoitems.length}  Item Left</span>
 
            </div>)}
+           <ul>
+             {
+                (filters.map((item,index) =>
+                  <li className={classNames('',{'selected': item.isShow})}  onClick={() => this.onFilterClicked(index)}>{item.name}</li>
+                ))             
+             }
+
+             
+           </ul>
         </div>
       </div>
     );
